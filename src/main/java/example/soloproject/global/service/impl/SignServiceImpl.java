@@ -33,7 +33,7 @@ public class SignServiceImpl implements SignService {
         logger.info("SignServiceImpl : signUp() 실행 - 회원 가입 정보 전달");
         User user = User.builder()
                 .nickname(request.getNickname())
-                .email(request.getEmail())
+                .UId(request.getUserId())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
@@ -52,9 +52,8 @@ public class SignServiceImpl implements SignService {
 
     public SignInResultDto signIn(SignInCauseDto request, HttpServletResponse response) throws RuntimeException {
         logger.info("SignServiceImpl : signIn() 실행 - 로그인 정보 전달");
-        User user = userRepository.findByUId(request.getUid());
+        User user = userRepository.findByUId(request.getUserId());
         logger.info("SignServiceImpl : signIn() 실행 - 패스워드 비교 수행");
-        SignInResultDto signInResultDto = new SignInResultDto();
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             logger.info("SignServiceImpl : signIn() 실행 - 패스워드 불일치");
@@ -63,7 +62,7 @@ public class SignServiceImpl implements SignService {
         logger.info("SignServiceImpl : signIn() 실행 - 패스워드 일치");
 
         logger.info("SignServiceImpl : signIn() 실행 - SignInResultDto 객체 생성");
-        SignInResultDto signinResultDto = SignInResultDto.builder()
+        SignInResultDto signInResultDto = SignInResultDto.builder()
                 .token(jwtTokenProvider.createAccess(String.valueOf(user.getUId())
                         ,user.getRoles()))
                 .refresh(jwtTokenProvider.createRefresh(String.valueOf(user.getUId())
@@ -71,7 +70,7 @@ public class SignServiceImpl implements SignService {
                 .build();
 
         logger.info("SignServiceImpl : signIn() 실행 - Cookie에 token값 주입");
-        cookieUtil.addJwtCookie(response,signinResultDto.getAccess(), signinResultDto.getRefresh());
+        cookieUtil.addJwtCookie(response,signInResultDto.getAccess(), signInResultDto.getRefresh());
 
         logger.info("SignServiceImpl : signIn() 실행 - SignInResultDto 객체에 값 주입");
         setSuccessResult(signInResultDto);
