@@ -1,5 +1,6 @@
 package example.soloproject.global.entity.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import lombok.*;
 
 @Getter
@@ -15,5 +16,13 @@ public class SignUpCauseDto {
     private String password;
 
     @NonNull
+    private String passwordCheck;
+
+    @NonNull
     private String nickname;
+
+    @AssertTrue(message = "비밀번호가 일치하지 않습니다.")
+    public boolean isPasswordMatching() {
+        return password.equals(passwordCheck);
+    }
 }

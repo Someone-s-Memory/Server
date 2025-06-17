@@ -7,6 +7,7 @@ import example.soloproject.global.entity.dto.SignUpResultDto;
 import example.soloproject.global.jwt.JwtTokenProvider;
 import example.soloproject.global.service.SignService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class SignController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/sign-in")
-    public ResponseEntity<?> signIn(@RequestBody SignInCauseDto request, HttpServletResponse response) throws RuntimeException {
+    public ResponseEntity<?> signIn(@Valid @RequestBody SignInCauseDto request, HttpServletResponse response) throws RuntimeException {
         logger.info("SignContoller : signIn() - 로그인을 시도하고 있습니다. id : {}, pw : ****", request.getUserId());
         HttpHeaders headers = new HttpHeaders();
         SignInResultDto signInResultDto = signService.signIn(request, response);
@@ -42,7 +43,7 @@ public class SignController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUp(@RequestBody SignUpCauseDto request) {
+    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpCauseDto request) {
         logger.info("SignController : signUp() - 회원가입을 시도합니다. id : {}", request.getUserId());
         SignUpResultDto signUpResultDto = signService.signUp(request);
 
