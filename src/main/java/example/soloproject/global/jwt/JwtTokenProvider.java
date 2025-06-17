@@ -3,10 +3,12 @@ package example.soloproject.global.jwt;
 import example.soloproject.global.entity.UserDetails;
 import example.soloproject.global.service.UserDetailsService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,5 +106,25 @@ public class JwtTokenProvider {
         List<String> roles = claims.get("roles", List.class);
         logger.info("JwtTokenProvider : getRoles() 실행 - 토큰으로부터 권한 정보 가져오기 완료");
         return roles;
+    }
+
+    public String resolveToken(HttpServletRequest request){
+        logger.info("JwtTokenProvider : resolveToken() 실행 - HTTP 헤더에서 토큰 값 추출");
+        return request.getHeader("Authorization") != null ? request.getHeader("Authorization").substring(7) : null;
+    }
+
+    public boolean validateToken(String token){
+        logger.info("JwtTokenProvider : validateToken() 실행 - 토큰 유효 체크 시작");
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (Exception e) {
+            logger.error("JwtTokenProvider : validateToken() 실행 - 토큰 유효 체크 실패: {}", e.getMessage());
+            return false;
+        }
     }
 }

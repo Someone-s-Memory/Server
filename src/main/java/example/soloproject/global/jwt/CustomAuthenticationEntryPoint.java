@@ -20,7 +20,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         logger.info("인증되지 않은 사용자 접근 시도: {}", request.getRequestURI());
 
         EntryPointErrorResponse entryPointErrorResponse = new EntryPointErrorResponse();
-        entryPointErrorResponse.setMsg("인증이 실패하였습니다.");
+        entryPointErrorResponse.setMsg("인증되지 않은 사용자 접근 시도");
 
         response.setContentType("application/json");
         response.setStatus(401);
