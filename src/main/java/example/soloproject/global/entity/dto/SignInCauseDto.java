@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 public class SignInCauseDto {
     @NonNull
-    private String id;
+    private String Uid;
 
     @NonNull
     private String password;

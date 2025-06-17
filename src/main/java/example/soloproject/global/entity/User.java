@@ -34,6 +34,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String nickname;
 
+    @Column(nullable = false, unique = true)
+    private String UId;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<String>();
