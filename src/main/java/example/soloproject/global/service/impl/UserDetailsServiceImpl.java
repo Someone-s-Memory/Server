@@ -1,7 +1,8 @@
-package example.soloproject.global.service;
+package example.soloproject.global.service.impl;
 
 import example.soloproject.global.entity.UserDetails;
 import example.soloproject.global.repository.UserRepository;
+import example.soloproject.global.service.UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

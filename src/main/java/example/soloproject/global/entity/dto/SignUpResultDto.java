@@ -1,0 +1,14 @@
+package example.soloproject.global.entity.dto;
+
+import lombok.*;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class SignUpResultDto {
+    private boolean success;
+    private int code;
+    private String msg;
+}
