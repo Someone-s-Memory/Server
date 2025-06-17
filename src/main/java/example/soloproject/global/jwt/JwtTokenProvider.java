@@ -11,12 +11,14 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -37,15 +39,15 @@ public class JwtTokenProvider {
         logger.info("JwtTokenProvider : init() 실행 - secretKey 초기화 완료");
     }
 
-    public String createRefresh(String niekName){
+    public String createRefresh(String nickName, List<String> roles) {
         logger.info("JwtTokenProvider : createRefresh() 실행 - 리프레쉬 토큰 생성 시작");
 
-//        Claims claims = Jwts.claims().setSubject(niekName); // Claims을 쓸 이유가 없음 Why -> 유저의 룰이 없기 때문
+        Claims claims = Jwts.claims().setSubject(nickName);
+        claims.put("roles", roles);
         Date now = new Date();
 
         String token = Jwts.builder()
-//                .setClaims(claims)
-                .setSubject(niekName)
+                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenValidMillisecond))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -56,18 +58,51 @@ public class JwtTokenProvider {
         return token;
     }
 
-    public String createAccess(String niekName) {
+    public String createAccess(String nickName, List<String> roles) {
         logger.info("JwtTokenProvider : createAccess() 실행 - 액세스 토큰 생성 시작");
 
         Date now = new Date();
+        Claims claims = Jwts.claims().setSubject(nickName);
+        claims.put("roles", roles);
 
         String token = Jwts.builder()
-                .setSubject(niekName)
+                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + tokenValidMillisecond))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
         logger.info("JwtTokenProvider : createAccess() 실행 - 액세스 토큰 생성 완료");
         return token;
+    }
+    public String getNickname(String token) {
+        logger.info("JwtTokenProvider : getUsername() 실행 - 토큰으로부터 유저 정보 가져오기 시작");
+        String info = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+        logger.info("JwtTokenProvider : getUsername() 실행 - 토큰으로부터 유저 정보 가져오기 완료");
+        return info;
+    }
+
+    public Authentication getAuthentication(String token) {
+        logger.info("JwtTokenProvider : getAuthentication() 실행 - 토큰으로부터 인증 정보 가져오기 시작");
+        UserDetails userDetails = userDetailsService.loadUserByNickname(this.getNickname(token));
+
+        logger.info("JwtTokenProvider : getAuthentication() 실행 - 토큰으로부터 인증 정보 가져오기 완료");
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
+    public List<String> getRoles(String token) {
+        logger.info("JwtTokenProvider : getRoles() 실행 - 토큰으로부터 권한 정보 가져오기 시작");
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        List<String> roles = claims.get("roles", List.class);
+        logger.info("JwtTokenProvider : getRoles() 실행 - 토큰으로부터 권한 정보 가져오기 완료");
+        return roles;
     }
 }
