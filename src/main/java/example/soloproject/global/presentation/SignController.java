@@ -5,7 +5,9 @@ import example.soloproject.global.entity.dto.SignInResultDto;
 import example.soloproject.global.entity.dto.SignUpCauseDto;
 import example.soloproject.global.entity.dto.SignUpResultDto;
 import example.soloproject.global.jwt.JwtTokenProvider;
+import example.soloproject.global.service.CookieUtil;
 import example.soloproject.global.service.SignService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping
@@ -25,6 +24,7 @@ public class SignController {
     private final Logger logger = LoggerFactory.getLogger(SignController.class);
     private final SignService signService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CookieUtil cookieUtil;
 
     @PostMapping("/sign-in")
     public ResponseEntity<?> signIn(@Valid @RequestBody SignInCauseDto request, HttpServletResponse response) throws RuntimeException {
@@ -53,5 +53,26 @@ public class SignController {
             logger.error("SignController : signUp() - 회원가입 실패. id : {}", request.getUserId());
         }
         return ResponseEntity.ok(signUpResultDto);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<?> signOut(HttpServletResponse response) {
+        logger.info("SignController : signOut() - 로그아웃을 시도합니다.");
+//        response.setHeader("access", "");
+//        response.setHeader("refresh", "");
+        Cookie accessCookie = new Cookie("access", null);
+        accessCookie.setPath("/");
+        accessCookie.setHttpOnly(true);  // 클라이언트 JS로 접근 못하도록 설정
+        accessCookie.setMaxAge(0);       // 쿠키 즉시 만료
+        response.addCookie(accessCookie);
+
+        // refresh 쿠키 삭제
+        Cookie refreshCookie = new Cookie("refresh", null);
+        refreshCookie.setPath("/");
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(0);
+        response.addCookie(refreshCookie);
+        logger.info("SignController : signOut() - 로그아웃이 완료되었습니다.");
+        return ResponseEntity.ok("로그아웃 성공");
     }
 }

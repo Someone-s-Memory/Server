@@ -28,7 +28,12 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()) // 모든 요청을 허용 -> 나중에 변경할 거
-
+                .logout(logout -> logout
+                        .logoutUrl("/sign-out") // 로그아웃 URL 설정
+                        .logoutSuccessUrl("/logout") // 로그아웃 성공 시 리다이렉트 URL 설정
+                        .invalidateHttpSession(true) // 세션 무효화
+                        .deleteCookies("JSESSIONID") // 쿠키 삭제
+                )
                 .formLogin(form -> form.disable()) // 폼 로그인 비활성화 -> 나중에 변경할 거
 
                 .httpBasic(http -> http.disable()) // HTTP Basic 인증 비활성화 -> 나중에 변경할 거
