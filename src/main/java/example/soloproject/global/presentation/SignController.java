@@ -54,25 +54,4 @@ public class SignController {
         }
         return ResponseEntity.ok(signUpResultDto);
     }
-
-    @GetMapping("/logout")
-    public ResponseEntity<?> signOut(HttpServletResponse response) {
-        logger.info("SignController : signOut() - 로그아웃을 시도합니다.");
-//        response.setHeader("access", "");
-//        response.setHeader("refresh", "");
-        Cookie accessCookie = new Cookie("access", null);
-        accessCookie.setPath("/");
-        accessCookie.setHttpOnly(true);  // 클라이언트 JS로 접근 못하도록 설정
-        accessCookie.setMaxAge(0);       // 쿠키 즉시 만료
-        response.addCookie(accessCookie);
-
-        // refresh 쿠키 삭제
-        Cookie refreshCookie = new Cookie("refresh", null);
-        refreshCookie.setPath("/");
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setMaxAge(0);
-        response.addCookie(refreshCookie);
-        logger.info("SignController : signOut() - 로그아웃이 완료되었습니다.");
-        return ResponseEntity.ok("로그아웃 성공");
-    }
 }
