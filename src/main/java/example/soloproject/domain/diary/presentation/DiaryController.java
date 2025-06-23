@@ -1,11 +1,14 @@
 package example.soloproject.domain.diary.presentation;
 
+import example.soloproject.domain.diary.presentation.dto.DiaryInsert;
 import example.soloproject.domain.diary.service.DiaryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,11 +19,12 @@ public class DiaryController {
     private final Logger logger = LoggerFactory.getLogger(DiaryController.class);
     private final DiaryService diaryService;
 
+    // update도 추가 예정
     @PostMapping("/write")
-    public ResponseEntity<?> writeDiary() {
+    public ResponseEntity<?> writeDiary(@Valid @RequestBody DiaryInsert diaryInsert) {
         logger.info(("DiaryController : writeDiary() - 일기 작성 요청이 들어왔습니다."));
         try {
-            diaryService.writeDiary();
+            diaryService.writeDiary(diaryInsert);
             logger.info("DiaryController : writeDiary() - 일기 작성이 완료되었습니다.");
             return ResponseEntity.ok("일기 작성이 완료되었습니다.");
         }
