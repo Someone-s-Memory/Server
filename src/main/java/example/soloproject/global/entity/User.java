@@ -1,6 +1,7 @@
 package example.soloproject.global.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import example.soloproject.domain.diary.entity.Diary;
 import example.soloproject.domain.pet.entity.Pet;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-//import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table
@@ -37,10 +37,13 @@ public class User implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
-    private List<String> roles = new ArrayList<String>();
+    private List<String> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pet> pets = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Diary> diaries = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

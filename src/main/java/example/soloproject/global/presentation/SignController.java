@@ -4,10 +4,7 @@ import example.soloproject.global.entity.dto.SignInCauseDto;
 import example.soloproject.global.entity.dto.SignInResultDto;
 import example.soloproject.global.entity.dto.SignUpCauseDto;
 import example.soloproject.global.entity.dto.SignUpResultDto;
-import example.soloproject.global.jwt.JwtTokenProvider;
-import example.soloproject.global.service.CookieUtil;
 import example.soloproject.global.service.SignService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class SignController {
     private final Logger logger = LoggerFactory.getLogger(SignController.class);
     private final SignService signService;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final CookieUtil cookieUtil;
 
     @PostMapping("/sign-in")
     public ResponseEntity<?> signIn(@Valid @RequestBody SignInCauseDto request, HttpServletResponse response) throws RuntimeException {
