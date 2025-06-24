@@ -36,6 +36,7 @@ public class SignServiceImpl implements SignService {
                 .UId(request.getUserId())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Collections.singletonList("ROLE_USER"))
+                .email(request.getEmail())
                 .build();
         User savedUser = userRepository.save(user);
         SignUpResultDto signUpResultDto = new SignUpResultDto();

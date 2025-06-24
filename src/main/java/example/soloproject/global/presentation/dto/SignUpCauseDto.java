@@ -1,6 +1,8 @@
 package example.soloproject.global.presentation.dto;
 
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -9,17 +11,20 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class SignUpCauseDto {
-    @NonNull
+    @NotNull
     private String userId;
 
-    @NonNull
+    @NotNull
     private String password;
 
-    @NonNull
+    @NotNull
     private String passwordCheck;
 
-    @NonNull
+    @NotNull
     private String nickname;
+
+    @Email
+    private String email;
 
     @AssertTrue(message = "비밀번호가 일치하지 않습니다.")
     public boolean isPasswordMatching() {

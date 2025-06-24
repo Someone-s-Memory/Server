@@ -39,6 +39,9 @@ public class User implements UserDetails {
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 
+    @Column(unique = true)
+    private String email;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pet> pets = new ArrayList<>();
 
@@ -84,5 +87,11 @@ public class User implements UserDetails {
     @Override
     public Long getID() {
         return this.ID;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Override
+    public String getEmail() {
+        return this.email;
     }
 }

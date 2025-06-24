@@ -1,5 +1,6 @@
 package example.soloproject.global.presentation.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -8,9 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class SignInCauseDto {
-    @NonNull
+    @NotNull
     private String userId;
 
-    @NonNull
+    @NotNull
     private String password;
 }
