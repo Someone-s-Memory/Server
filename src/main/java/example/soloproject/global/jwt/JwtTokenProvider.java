@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -41,10 +42,10 @@ public class JwtTokenProvider {
         logger.info("JwtTokenProvider : init() 실행 - secretKey 초기화 완료");
     }
 
-    public String createRefresh(String nickName, List<String> roles) {
+    public String createRefresh(String userID, List<String> roles) {
         logger.info("JwtTokenProvider : createRefresh() 실행 - 리프레쉬 토큰 생성 시작");
 
-        Claims claims = Jwts.claims().setSubject(nickName);
+        Claims claims = Jwts.claims().setSubject(userID);
         claims.put("roles", roles);
         Date now = new Date();
 
@@ -60,11 +61,11 @@ public class JwtTokenProvider {
         return token;
     }
 
-    public String createAccess(String nickName, List<String> roles) {
+    public String createAccess(String userID, List<String> roles) {
         logger.info("JwtTokenProvider : createAccess() 실행 - 액세스 토큰 생성 시작");
 
         Date now = new Date();
-        Claims claims = Jwts.claims().setSubject(nickName);
+        Claims claims = Jwts.claims().setSubject(userID);
         claims.put("roles", roles);
 
         String token = Jwts.builder()
@@ -108,11 +109,29 @@ public class JwtTokenProvider {
         return roles;
     }
 
-    public String resolveToken(HttpServletRequest request){
-        logger.info("JwtTokenProvider : resolveToken() 실행 - HTTP 헤더에서 토큰 값 추출");
-        return request.getHeader("Authorization") != null ? request.getHeader("Authorization").substring(7) : null;
-    }
+    public String resolveToken(HttpServletRequest request) {
+        logger.info("JwtTokenProvider : resolveToken() 실행 - 헤더 또는 쿠키에서 토큰 값 추출");
 
+        // 1. Authorization 헤더 우선
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            logger.info("Authorization 헤더에서 토큰 추출 성공");
+            return bearerToken.substring(7);
+        }
+
+        // 2. 쿠키에 access 토큰 있는지 확인
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("access".equals(cookie.getName())) {
+                    logger.info("쿠키에서 access 토큰 추출 성공");
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        logger.warn("토큰 추출 실패 - Authorization 헤더 및 access 쿠키 모두 없음");
+        return null;
+    }
     public boolean validateToken(String token){
         logger.info("JwtTokenProvider : validateToken() 실행 - 토큰 유효 체크 시작");
         try {

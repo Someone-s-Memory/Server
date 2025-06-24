@@ -58,7 +58,7 @@ public class SecurityConfig {
                             // 응답 코드 및 메시지 설정
                             response.setStatus(HttpServletResponse.SC_OK);
                             response.setContentType("application/json");
-                            response.getWriter().write("{\"message\": \"로그아웃 성공\"}");
+                            response.getWriter().write("{\"message\": \"Logout success\"}");
                         })
                         .deleteCookies("JSESSIONID") // 쿠키 삭제
                 )

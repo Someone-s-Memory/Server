@@ -1,6 +1,7 @@
 package example.soloproject.domain.diary.presentation;
 
-import example.soloproject.domain.diary.presentation.dto.DiaryInsert;
+import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
+import example.soloproject.domain.diary.presentation.dto.response.Message;
 import example.soloproject.domain.diary.service.DiaryService;
 import example.soloproject.global.entity.UserDetails;
 import jakarta.validation.Valid;
@@ -28,11 +29,15 @@ public class DiaryController {
         try {
             diaryService.writeDiary(diaryInsert, auth);
             logger.info("DiaryController : writeDiary() - 일기 작성이 완료되었습니다.");
-            return ResponseEntity.ok("일기 작성이 완료되었습니다.");
+            return ResponseEntity.ok(m("일기 작성이 완료되었습니다."));
         }
         catch (Exception e) {
             logger.error("DiaryController : writeDiary() - 일기 작성 중 오류 발생: {}", e.getMessage());
-            return ResponseEntity.badRequest().body("일기 작성 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.badRequest().body(m("일기 작성 중 오류가 발생했습니다: " + e.getMessage()));
         }
+    }
+
+    public Message m (String message) {
+        return Message.of(message);
     }
 }

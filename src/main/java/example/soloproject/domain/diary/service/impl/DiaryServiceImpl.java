@@ -1,7 +1,7 @@
 package example.soloproject.domain.diary.service.impl;
 
 import example.soloproject.domain.diary.entity.Diary;
-import example.soloproject.domain.diary.presentation.dto.DiaryInsert;
+import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
 import example.soloproject.domain.diary.repository.DiaryRepository;
 import example.soloproject.domain.diary.service.DiaryService;
 import example.soloproject.global.entity.User;
