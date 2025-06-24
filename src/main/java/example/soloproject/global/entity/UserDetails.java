@@ -13,4 +13,5 @@ public interface UserDetails extends Serializable {
     boolean isAccountNonLocked();
     boolean isCredentialsNonExpired();
     boolean isEnabled();
+    Long getID();
 }

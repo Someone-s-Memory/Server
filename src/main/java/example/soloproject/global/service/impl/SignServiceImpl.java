@@ -1,10 +1,10 @@
 package example.soloproject.global.service.impl;
 
 import example.soloproject.global.entity.User;
-import example.soloproject.global.entity.dto.SignInCauseDto;
-import example.soloproject.global.entity.dto.SignInResultDto;
-import example.soloproject.global.entity.dto.SignUpCauseDto;
-import example.soloproject.global.entity.dto.SignUpResultDto;
+import example.soloproject.global.presentation.dto.SignInCauseDto;
+import example.soloproject.global.presentation.dto.SignInResultDto;
+import example.soloproject.global.presentation.dto.SignUpCauseDto;
+import example.soloproject.global.presentation.dto.SignUpResultDto;
 import example.soloproject.global.jwt.CommonResponse;
 import example.soloproject.global.jwt.JwtTokenProvider;
 import example.soloproject.global.repository.UserRepository;

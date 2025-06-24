@@ -1,4 +1,4 @@
-package example.soloproject.global.entity.dto;
+package example.soloproject.global.presentation.dto;
 
 import lombok.Getter;
 import lombok.Setter;

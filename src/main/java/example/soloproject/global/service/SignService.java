@@ -1,9 +1,9 @@
 package example.soloproject.global.service;
 
-import example.soloproject.global.entity.dto.SignInCauseDto;
-import example.soloproject.global.entity.dto.SignInResultDto;
-import example.soloproject.global.entity.dto.SignUpCauseDto;
-import example.soloproject.global.entity.dto.SignUpResultDto;
+import example.soloproject.global.presentation.dto.SignInCauseDto;
+import example.soloproject.global.presentation.dto.SignInResultDto;
+import example.soloproject.global.presentation.dto.SignUpCauseDto;
+import example.soloproject.global.presentation.dto.SignUpResultDto;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface SignService {

@@ -76,22 +76,22 @@ public class JwtTokenProvider {
         logger.info("JwtTokenProvider : createAccess() 실행 - 액세스 토큰 생성 완료");
         return token;
     }
-    public String getNickname(String token) {
-        logger.info("JwtTokenProvider : getUsername() 실행 - 토큰으로부터 유저 정보 가져오기 시작");
+    public String getUserID(String token) {
+        logger.info("JwtTokenProvider : getUserID() 실행 - 토큰으로부터 유저 정보 가져오기 시작");
         String info = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
-        logger.info("JwtTokenProvider : getUsername() 실행 - 토큰으로부터 유저 정보 가져오기 완료");
+        logger.info("JwtTokenProvider : getUserID() 실행 - 토큰으로부터 유저 정보 가져오기 완료");
         return info;
     }
 
     public Authentication getAuthentication(String token) {
         logger.info("JwtTokenProvider : getAuthentication() 실행 - 토큰으로부터 인증 정보 가져오기 시작");
-        UserDetails userDetails = userDetailsService.loadUserByNickname(this.getNickname(token));
-
+        UserDetails userDetails = userDetailsService.loadUserByUserID(this.getUserID(token));
+        logger.info(userDetails.getUsername() + " 유저 정보 확인");
         logger.info("JwtTokenProvider : getAuthentication() 실행 - 토큰으로부터 인증 정보 가져오기 완료");
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }

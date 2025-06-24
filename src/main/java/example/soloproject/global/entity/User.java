@@ -79,4 +79,10 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Override
+    public Long getID() {
+        return this.ID;
+    }
 }
