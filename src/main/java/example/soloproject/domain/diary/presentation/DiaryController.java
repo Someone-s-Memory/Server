@@ -10,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,4 +37,16 @@ public class DiaryController {
     public Message m (String message) {
         return Message.of(message);
     }
+
+//    @GetMapping
+//    public ResponseEntity<?> getDiary() {
+//        logger.info("DiaryController : getDiary() - 일기 조회 요청이 들어왔습니다.");
+//        try {
+//
+//        }
+//        catch (Exception e) {
+//            logger.error("DiaryController : getDiary() - 일기 조회 중 오류 발생: {}", e.getMessage());
+//            return ResponseEntity.badRequest().body(m("일기 조회 중 오류가 발생했습니다: " + e.getMessage()));
+//        }
+//    }
 }
