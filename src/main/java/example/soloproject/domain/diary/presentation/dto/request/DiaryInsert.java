@@ -3,6 +3,8 @@ package example.soloproject.domain.diary.presentation.dto.request;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class DiaryInsert {
     @NotNull
@@ -10,10 +12,10 @@ public class DiaryInsert {
     @NotNull
     private String content;
     @NotNull
-    private String filling;
+    private String feeling;
     @NotNull
     private String weather;
-    private String picture;
+    private List<String> pictures;
     @NotNull
     private String date;
 }

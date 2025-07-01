@@ -27,12 +27,13 @@ public class DiaryServiceImpl implements DiaryService {
         logger.info("DiaryServiceImpl : writeDiary() - 일기 작성을 시작합니다.");
         logger.debug(auth.getID() + "auth ID값 확인");
         User user = methodService.getUserById(auth.getID());
+
         Diary diary = Diary.builder()
                 .title(diaryInsert.getTitle())
                 .content(diaryInsert.getContent())
-                .fillings(Collections.singletonList(diaryInsert.getFilling()))
+                .feelings(Collections.singletonList(diaryInsert.getFeeling()))
                 .weathers(Collections.singletonList((diaryInsert.getWeather())))
-                .picture(diaryInsert.getPicture())
+                .pictures(diaryInsert.getPictures())
                 .date(diaryInsert.getDate())
                 .user(user)
                 .build();
