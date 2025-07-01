@@ -15,4 +15,5 @@ public interface UserDetails extends Serializable {
     boolean isEnabled();
     Long getID();
     String getEmail();
+    String getUId();
 }

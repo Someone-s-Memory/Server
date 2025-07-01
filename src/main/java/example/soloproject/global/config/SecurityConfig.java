@@ -1,5 +1,7 @@
 package example.soloproject.global.config;
 
+import example.soloproject.global.filter.RateLimitFilter;
+import example.soloproject.global.filter.SpikeArrestFilter;
 import example.soloproject.global.jwt.CustomAccessDeniedHandler;
 import example.soloproject.global.jwt.CustomAuthenticationEntryPoint;
 import example.soloproject.global.jwt.JwtAuthenticationFilter;
@@ -71,6 +73,8 @@ public class SecurityConfig {
                         .accessDeniedHandler(new CustomAccessDeniedHandler())// 권한이 없는 경우
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new SpikeArrestFilter(), JwtAuthenticationFilter.class) // SpikeArrestFilter 추가
+                .addFilterAfter(new RateLimitFilter(), SpikeArrestFilter.class) // RateLimitFilter 추가
         ;
 
         return httpSecurity.build();

@@ -29,7 +29,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nickname;
 
     @Column(nullable = false, unique = true)
@@ -93,5 +93,11 @@ public class User implements UserDetails {
     @Override
     public String getEmail() {
         return this.email;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Override
+    public String getUId() {
+        return this.UId;
     }
 }
