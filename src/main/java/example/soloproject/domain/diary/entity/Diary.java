@@ -4,16 +4,22 @@ import example.soloproject.global.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@Getter
 public class Diary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,4 +46,13 @@ public class Diary {
     private User user;
 
     private String date;
+
+    public String getFeelings() {
+        return this.feelings.stream().findFirst().orElse(null);
+    }
+
+    public String getWeathers() {
+        return this.weathers.stream().findFirst().orElse(null);
+    }
+
 }

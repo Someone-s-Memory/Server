@@ -2,6 +2,8 @@ package example.soloproject.domain.diary.service.impl;
 
 import example.soloproject.domain.diary.entity.Diary;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
+import example.soloproject.domain.diary.presentation.dto.request.DiarySelect;
+import example.soloproject.domain.diary.presentation.dto.response.DiarySelected;
 import example.soloproject.domain.diary.repository.DiaryRepository;
 import example.soloproject.domain.diary.service.DiaryService;
 import example.soloproject.global.entity.User;
@@ -13,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,5 +51,58 @@ public class DiaryServiceImpl implements DiaryService {
                     .build();
         }
         diaryRepository.save(diary);
+    }
+
+    public List<DiarySelected> getDiary(DiarySelect diarySelect, UserDetails auth){
+        logger.info("DiaryServiceImpl : getDiary() - 일기 조회를 시작합니다.");
+        User user = methodService.getUserById(auth.getID());
+        List<Diary> diarys = diaryRepository.findByUserAndDate(user, diarySelect.getDate());
+        if (diarys.isEmpty()) {
+            logger.warn("DiaryServiceImpl : getDiary() - 해당 날짜의 일기가 존재하지 않습니다.");
+            throw new IllegalArgumentException("해당 날짜의 일기가 존재하지 않습니다.");
+        }
+        List<DiarySelected> diarySelecteds = new ArrayList<>();
+        for (Diary diary : diarys) {
+            DiarySelected diarySelected = DiarySelected.builder()
+                    .id(diary.getId())
+                    .title(diary.getTitle())
+                    .content(diary.getContent())
+                    .feeling(diary.getFeelings())
+                    .weather(diary.getWeathers())
+                    .pictures(diary.getPictures())
+                    .date(diary.getDate())
+                    .userID(user.getUId())
+                    .build();
+            diarySelecteds.add(diarySelected);
+        }
+
+        logger.info("DiaryServiceImpl : getDiary() - 일기 조회가 완료되었습니다.");
+        return diarySelecteds;
+    }
+
+    public List<DiarySelected> getAllDiary(UserDetails auth){
+       logger.info("DiaryServiceImpl : getAllDiary() - 모든 일기 조회를 시작합니다.");
+        User user = methodService.getUserById(auth.getID());
+        List<Diary> diarys = diaryRepository.findByUser(user);
+        if (diarys.isEmpty()) {
+            logger.warn("DiaryServiceImpl : getAllDiary() - 해당 유저의 일기가 존재하지 않습니다.");
+            throw new IllegalArgumentException("해당 유저의 일기가 존재하지 않습니다.");
+        }
+        List<DiarySelected> diarySelecteds = new ArrayList<>();
+        for (Diary diary : diarys) {
+            DiarySelected diarySelected = DiarySelected.builder()
+                    .id(diary.getId())
+                    .title(diary.getTitle())
+                    .content(diary.getContent())
+                    .feeling(diary.getFeelings())
+                    .weather(diary.getWeathers())
+                    .pictures(diary.getPictures())
+                    .date(diary.getDate())
+                    .userID(user.getUId())
+                    .build();
+            diarySelecteds.add(diarySelected);
+        }
+        logger.info("DiaryServiceImpl : getAllDiary() - 모든 일기 조회가 완료되었습니다.");
+        return diarySelecteds;
     }
 }
