@@ -1,5 +1,6 @@
 package example.soloproject.domain.diary.presentation;
 
+import example.soloproject.domain.diary.presentation.dto.request.DiaryDelete;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryUpdate;
 import example.soloproject.domain.diary.presentation.dto.response.DiarySelected;
@@ -79,6 +80,19 @@ public class DiaryController {
         } catch (Exception e) {
             logger.error("DiaryController : updateDiary() - 일기 수정 중 오류 발생: {}", e.getMessage());
             return ResponseEntity.badRequest().body(m("일기 수정 중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteDiary(@Valid @RequestBody DiaryDelete diaryDelete, @AuthenticationPrincipal UserDetails auth) {
+        logger.info("DiaryController : deleteDiary() - 일기 삭제 요청이 들어왔습니다.");
+        try {
+            diaryService.deleteDiary(diaryDelete, auth);
+            logger.info("DiaryController : deleteDiary() - 일기 삭제가 완료되었습니다.");
+            return ResponseEntity.ok(m("일기 삭제가 완료되었습니다."));
+        } catch (Exception e) {
+            logger.error("DiaryController : deleteDiary() - 일기 삭제 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(m("일기 삭제 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
 }
