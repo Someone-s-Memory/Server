@@ -1,7 +1,7 @@
 package example.soloproject.domain.diary.presentation;
 
 import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
-import example.soloproject.domain.diary.presentation.dto.request.DiarySelect;
+import example.soloproject.domain.diary.presentation.dto.request.DiaryUpdate;
 import example.soloproject.domain.diary.presentation.dto.response.DiarySelected;
 import example.soloproject.domain.diary.presentation.dto.response.Message;
 import example.soloproject.domain.diary.service.DiaryService;
@@ -43,10 +43,10 @@ public class DiaryController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getDiary(@Valid @RequestBody DiarySelect diarySelect, @AuthenticationPrincipal UserDetails auth) {
+    public ResponseEntity<?> getDiary(@RequestParam String date, @AuthenticationPrincipal UserDetails auth) {
         logger.info("DiaryController : getDiary() - 일기 조회 요청이 들어왔습니다.");
         try {
-            List<DiarySelected> diarySelectedList = diaryService.getDiary(diarySelect, auth);
+            List<DiarySelected> diarySelectedList = diaryService.getDiary(date, auth);
             logger.info("DiaryController : getDiary() - 일기 조회가 완료되었습니다.");
             return ResponseEntity.ok(diarySelectedList);
         }
@@ -66,6 +66,19 @@ public class DiaryController {
         } catch (Exception e) {
             logger.error("DiaryController : getAllDiary() - 모든 일기 조회 중 오류 발생: {}", e.getMessage());
             return ResponseEntity.badRequest().body(m("모든 일기 조회 중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateDiary(@Valid @RequestBody DiaryUpdate diaryUpdate, @AuthenticationPrincipal UserDetails auth) {
+        logger.info("DiaryController : updateDiary() - 일기 수정 요청이 들어왔습니다.");
+        try {
+            diaryService.updateDiary(diaryUpdate, auth);
+            logger.info("DiaryController : updateDiary() - 일기 수정이 완료되었습니다.");
+            return ResponseEntity.ok(m("일기 수정이 완료되었습니다."));
+        } catch (Exception e) {
+            logger.error("DiaryController : updateDiary() - 일기 수정 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(m("일기 수정 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
 }
