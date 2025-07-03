@@ -79,6 +79,26 @@ public class SignServiceImpl implements SignService {
         return signInResultDto;
     }
 
+    public SignInResultDto refreshToken(String refreshToken, HttpServletResponse response) throws RuntimeException {
+        logger.info("SignServiceImpl : refreshToken() 실행 - 리프레시 토큰 갱신 요청");
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            logger.error("SignServiceImpl : refreshToken() 실행 - 유효하지 않은 리프레시 토큰");
+            throw new RuntimeException("유효하지 않은 리프레시 토큰입니다.");
+        }
+
+        String userId = jwtTokenProvider.getUserID(refreshToken);
+        User user = userRepository.findByUId(userId);
+
+        SignInResultDto signInResultDto = SignInResultDto.builder()
+                .token(jwtTokenProvider.createAccess(user.getUId(), user.getRoles()))
+                .refresh(jwtTokenProvider.createRefresh(user.getUId(), user.getRoles()))
+                .build();
+
+        cookieUtil.addJwtCookie(response, signInResultDto.getAccess(), signInResultDto.getRefresh());
+        setSuccessResult(signInResultDto);
+        return signInResultDto;
+    }
+
     private void setSuccessResult(SignUpResultDto result){
         result.setSuccess(true);
         result.setCode(CommonResponse.SUCCESS.getCode());

@@ -49,4 +49,20 @@ public class SignController {
         }
         return ResponseEntity.ok(signUpResultDto);
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@CookieValue("refresh") String refreshToken, HttpServletResponse response) {
+        logger.info("SignController : refreshToken() - 리프레시 토큰을 갱신합니다.");
+        HttpHeaders headers = new HttpHeaders();
+        SignInResultDto signInResultDto = signService.refreshToken(refreshToken, response);
+
+        if (signInResultDto.getCode() == 0) {
+            logger.info("SignController : refreshToken() - 리프레시 토큰 갱신 성공.");
+            headers.set("access", signInResultDto.getAccess());
+            headers.set("refresh", signInResultDto.getRefresh());
+        } else {
+            logger.error("SignController : refreshToken() - 리프레시 토큰 갱신 실패.");
+        }
+        return ResponseEntity.ok().headers(headers).body(signInResultDto);
+    }
 }

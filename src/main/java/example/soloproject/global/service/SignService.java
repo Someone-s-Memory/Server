@@ -10,4 +10,5 @@ public interface SignService {
     SignUpResultDto signUp(SignUpCauseDto request);
 
     SignInResultDto signIn(SignInCauseDto request, HttpServletResponse response) throws RuntimeException;
+    SignInResultDto refreshToken(String refreshToken, HttpServletResponse response) throws RuntimeException;
 }
