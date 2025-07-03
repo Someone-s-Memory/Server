@@ -95,4 +95,17 @@ public class DiaryController {
             return ResponseEntity.badRequest().body(m("일기 삭제 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
+
+    @GetMapping("/detail")
+    public ResponseEntity<?> getDiaryDetail(@RequestParam Long diaryId, @AuthenticationPrincipal UserDetails auth) {
+        logger.info("DiaryController : getDiaryDetail() - 일기 상세 조회 요청이 들어왔습니다.");
+        try {
+            DiarySelected diarySelected = diaryService.getDiaryDetail(diaryId, auth);
+            logger.info("DiaryController : getDiaryDetail() - 일기 상세 조회가 완료되었습니다.");
+            return ResponseEntity.ok(diarySelected);
+        } catch (Exception e) {
+            logger.error("DiaryController : getDiaryDetail() - 일기 상세 조회 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(m("일기 상세 조회 중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
 }

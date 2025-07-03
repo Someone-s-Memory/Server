@@ -109,6 +109,27 @@ public class DiaryServiceImpl implements DiaryService {
         logger.info("DiaryServiceImpl : deleteDiary() - 일기 삭제가 완료되었습니다.");
     }
 
+    public DiarySelected getDiaryDetail(Long diaryId, UserDetails auth) {
+        logger.info("DiaryServiceImpl : getDiaryDetail() - 일기 상세 조회를 시작합니다.");
+        User user = methodService.getUserById(auth.getID());
+        Diary diary = diaryRepository.findByIdAndUser(diaryId, user)
+                .orElseThrow(() -> new IllegalArgumentException("해당 일기가 존재하지 않습니다."));
+
+        DiarySelected diarySelected = DiarySelected.builder()
+                .id(diary.getId())
+                .title(diary.getTitle())
+                .content(diary.getContent())
+                .feeling(diary.getFeelings())
+                .weather(diary.getWeathers())
+                .pictures(diary.getPictures())
+                .date(diary.getDate())
+                .userID(user.getUId())
+                .build();
+
+        logger.info("DiaryServiceImpl : getDiaryDetail() - 일기 상세 조회가 완료되었습니다.");
+        return diarySelected;
+    }
+
     private void addDiarySelected(List<DiarySelected> diarySelecteds, List<Diary> diarys, User user) {
         for (Diary diary : diarys) {
             DiarySelected diarySelected = DiarySelected.builder()

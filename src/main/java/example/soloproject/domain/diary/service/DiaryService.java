@@ -13,6 +13,6 @@ public interface DiaryService {
     List<DiarySelected> getDiary(String date, UserDetails auth);
     List<DiarySelected> getAllDiary(UserDetails auth);
     void updateDiary(DiaryUpdate diaryUpdate,UserDetails auth);
-
     void deleteDiary(DiaryDelete diaryDelete, UserDetails auth);
+    DiarySelected getDiaryDetail(Long diaryId, UserDetails auth);
 }
