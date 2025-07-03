@@ -1,6 +1,5 @@
 package example.soloproject.domain.diary.service;
 
-import example.soloproject.domain.diary.presentation.dto.request.DiaryDelete;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryUpdate;
 import example.soloproject.domain.diary.presentation.dto.response.DiarySelected;
@@ -13,6 +12,6 @@ public interface DiaryService {
     List<DiarySelected> getDiary(String date, UserDetails auth);
     List<DiarySelected> getAllDiary(UserDetails auth);
     void updateDiary(DiaryUpdate diaryUpdate,UserDetails auth);
-    void deleteDiary(DiaryDelete diaryDelete, UserDetails auth);
+    void deleteDiary(String date, String title, UserDetails auth);
     DiarySelected getDiaryDetail(Long diaryId, UserDetails auth);
 }

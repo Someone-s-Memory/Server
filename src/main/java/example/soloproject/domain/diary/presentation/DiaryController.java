@@ -1,6 +1,5 @@
 package example.soloproject.domain.diary.presentation;
 
-import example.soloproject.domain.diary.presentation.dto.request.DiaryDelete;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryUpdate;
 import example.soloproject.domain.diary.presentation.dto.response.DiarySelected;
@@ -84,10 +83,10 @@ public class DiaryController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteDiary(@Valid @RequestBody DiaryDelete diaryDelete, @AuthenticationPrincipal UserDetails auth) {
+    public ResponseEntity<?> deleteDiary(@RequestParam String date, @RequestParam String title, @AuthenticationPrincipal UserDetails auth) {
         logger.info("DiaryController : deleteDiary() - 일기 삭제 요청이 들어왔습니다.");
         try {
-            diaryService.deleteDiary(diaryDelete, auth);
+            diaryService.deleteDiary(date, title, auth);
             logger.info("DiaryController : deleteDiary() - 일기 삭제가 완료되었습니다.");
             return ResponseEntity.ok(m("일기 삭제가 완료되었습니다."));
         } catch (Exception e) {

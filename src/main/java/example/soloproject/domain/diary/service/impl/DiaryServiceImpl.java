@@ -1,7 +1,6 @@
 package example.soloproject.domain.diary.service.impl;
 
 import example.soloproject.domain.diary.entity.Diary;
-import example.soloproject.domain.diary.presentation.dto.request.DiaryDelete;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryUpdate;
 import example.soloproject.domain.diary.presentation.dto.response.DiarySelected;
@@ -100,10 +99,10 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     @Transactional
-    public void deleteDiary(DiaryDelete diaryDelete, UserDetails auth) {
+    public void deleteDiary(String date, String title, UserDetails auth) {
         logger.info("DiaryServiceImpl : deleteDiary() - 일기 삭제를 시작합니다.");
         User user = methodService.getUserById(auth.getID());
-        Diary diary = diaryRepository.findByUserAndDateAndTitle(user, diaryDelete.getDate(), diaryDelete.getTitle())
+        Diary diary = diaryRepository.findByUserAndDateAndTitle(user, date, title)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일기가 존재하지 않습니다."));
         diaryRepository.delete(diary);
         logger.info("DiaryServiceImpl : deleteDiary() - 일기 삭제가 완료되었습니다.");
