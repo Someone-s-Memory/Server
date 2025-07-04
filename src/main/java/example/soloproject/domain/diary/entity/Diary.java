@@ -35,6 +35,7 @@ public class Diary {
     @Builder.Default
     private List<String> weathers = new ArrayList<>();
 
+    @Lob
     private String content;
 
     @ElementCollection(fetch = FetchType.EAGER)

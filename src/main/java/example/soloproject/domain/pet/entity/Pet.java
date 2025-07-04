@@ -25,7 +25,9 @@ public class Pet {
     @Builder.Default
     private List<String> types = new ArrayList<>();
 
-    private Double level;
+    private Integer level;
+
+    private Double experience;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
