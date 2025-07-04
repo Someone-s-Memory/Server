@@ -34,10 +34,10 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용하지 않음
 
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()) // 모든 요청을 허용 -> 나중에 변경할 거
+                        .requestMatchers("/sign-in", "/sign-up", "/refresh").permitAll() // 로그인, 회원가입, 리프레시 토큰은 모두 허용
+                        .anyRequest().authenticated())
                 .logout(logout -> logout
                         .logoutUrl("/sign-out") // 로그아웃 URL 설정
-                        .logoutSuccessUrl(null) // 로그아웃 성공 시 리다이렉트 URL 설정
                         .invalidateHttpSession(true) // 세션 무효화
                         .logoutSuccessHandler((request, response, authentication) -> {
                             logger.info("SecurityConfig : logoutSuccessHandler() - 로그아웃 요청이 들어왔습니다.");
