@@ -2,6 +2,7 @@ package example.soloproject.domain.diary.presentation;
 
 import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryUpdate;
+import example.soloproject.domain.diary.presentation.dto.response.DiaryMonth;
 import example.soloproject.domain.diary.presentation.dto.response.DiarySelected;
 import example.soloproject.domain.diary.presentation.dto.response.Message;
 import example.soloproject.domain.diary.service.DiaryService;
@@ -105,6 +106,19 @@ public class DiaryController {
         } catch (Exception e) {
             logger.error("DiaryController : getDiaryDetail() - 일기 상세 조회 중 오류 발생: {}", e.getMessage());
             return ResponseEntity.badRequest().body(m("일기 상세 조회 중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/month")
+    public ResponseEntity<?> getDiaryByMonth(@RequestParam String month, @AuthenticationPrincipal UserDetails auth) {
+        logger.info("DiaryController : getDiaryByMonth() - 월별 일기 조회 요청이 들어왔습니다.");
+        try {
+            DiaryMonth diaryMonth = diaryService.getDiaryMonth(month, auth);
+            logger.info("DiaryController : getDiaryByMonth() - 월별 일기 조회가 완료되었습니다.");
+            return ResponseEntity.ok(diaryMonth);
+        } catch (Exception e) {
+            logger.error("DiaryController : getDiaryByMonth() - 월별 일기 조회 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(m("월별 일기 조회 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
 }

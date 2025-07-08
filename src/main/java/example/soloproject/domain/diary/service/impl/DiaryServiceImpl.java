@@ -3,6 +3,7 @@ package example.soloproject.domain.diary.service.impl;
 import example.soloproject.domain.diary.entity.Diary;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryUpdate;
+import example.soloproject.domain.diary.presentation.dto.response.DiaryMonth;
 import example.soloproject.domain.diary.presentation.dto.response.DiarySelected;
 import example.soloproject.domain.diary.repository.DiaryRepository;
 import example.soloproject.domain.diary.service.DiaryService;
@@ -15,10 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -127,6 +126,54 @@ public class DiaryServiceImpl implements DiaryService {
 
         logger.info("DiaryServiceImpl : getDiaryDetail() - 일기 상세 조회가 완료되었습니다.");
         return diarySelected;
+    }
+
+    public DiaryMonth getDiaryMonth(String date, UserDetails auth){
+        logger.info("DiaryServiceImpl : getDiaryMonth() - 월별 일기 통계를 조회를 시작합니다.");
+        User user = methodService.getUserById(auth.getID());
+        String toMonth = LocalDate.now().getYear() + "-" + date;
+        List<Diary> diarys = diaryRepository.findByUserAndDateContaining(user, toMonth);
+        if (diarys.isEmpty()) {
+            logger.warn("DiaryServiceImpl : getDiaryMonth() - 해당 월의 일기가 존재하지 않습니다.");
+            throw new IllegalArgumentException("해당 월의 일기가 존재하지 않습니다.");
+        }
+
+        Map<String, Short> feelings = new HashMap<>();
+        short maxCount = 0;
+        short count = 0;
+        short toDate = 1;
+        Set<Short> uniqueDates = new HashSet<>();
+
+        for (Diary diary : diarys) {
+            feelings.put(diary.getFeelings(), (short) (feelings.getOrDefault(diary.getFeelings(), (short) 0) + 1));
+            logger.info(diary.getWeathers() + " 날씨 확인");
+            toDate = Short.parseShort(diary.getDate().replace(toMonth + "-", ""));
+            uniqueDates.add(toDate);
+        }
+
+        toDate = 0;
+
+        for (Short uniqueDate : uniqueDates) {
+            if (toDate + 1 == uniqueDate) {
+                count++;
+                if (count > maxCount) {
+                    maxCount = count;
+                }
+            } else {
+                count = 1;
+            }
+            toDate = uniqueDate;
+        }
+
+        DiaryMonth diaryMonth = DiaryMonth.builder()
+                .feelings(feelings)
+                .sequence(maxCount)
+                .every((short) diarys.size())
+                .build();
+
+
+        logger.info("DiaryServiceImpl : getDiaryMonth() - 월별 일기 통계 조회가 완료되었습니다.");
+        return diaryMonth;
     }
 
     private void addDiarySelected(List<DiarySelected> diarySelecteds, List<Diary> diarys, User user) {

@@ -2,6 +2,7 @@ package example.soloproject.domain.diary.service;
 
 import example.soloproject.domain.diary.presentation.dto.request.DiaryInsert;
 import example.soloproject.domain.diary.presentation.dto.request.DiaryUpdate;
+import example.soloproject.domain.diary.presentation.dto.response.DiaryMonth;
 import example.soloproject.domain.diary.presentation.dto.response.DiarySelected;
 import example.soloproject.global.entity.UserDetails;
 
@@ -14,4 +15,5 @@ public interface DiaryService {
     void updateDiary(DiaryUpdate diaryUpdate,UserDetails auth);
     void deleteDiary(String date, String title, UserDetails auth);
     DiarySelected getDiaryDetail(Long diaryId, UserDetails auth);
+    DiaryMonth getDiaryMonth(String date, UserDetails auth);
 }
