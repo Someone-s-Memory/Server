@@ -72,7 +72,7 @@ public class SignController {
         if (refreshToken == null) {
             logger.error("SignController : refreshToken() - 리프레시 토큰이 없습니다.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Refresh token is missing.");
+                    .body("Refresh token이 존재하지 않습니다..");
         }
 
         HttpHeaders headers = new HttpHeaders();
