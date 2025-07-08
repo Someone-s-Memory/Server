@@ -141,12 +141,11 @@ public class DiaryServiceImpl implements DiaryService {
         Map<String, Short> feelings = new HashMap<>();
         short maxCount = 0;
         short count = 0;
-        short toDate = 1;
+        short toDate;
         Set<Short> uniqueDates = new HashSet<>();
 
         for (Diary diary : diarys) {
             feelings.put(diary.getFeelings(), (short) (feelings.getOrDefault(diary.getFeelings(), (short) 0) + 1));
-            logger.info(diary.getWeathers() + " 날씨 확인");
             toDate = Short.parseShort(diary.getDate().replace(toMonth + "-", ""));
             uniqueDates.add(toDate);
         }
