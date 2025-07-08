@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,8 +52,29 @@ public class SignController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@CookieValue("refresh") String refreshToken, HttpServletResponse response) {
+    public ResponseEntity<?> refreshToken(
+            @CookieValue(value = "refresh", required = false) String refreshCookie,
+            @RequestHeader(value = "Authorization", required = false) String refreshHeader,
+            HttpServletResponse response
+    )
+    {
         logger.info("SignController : refreshToken() - 리프레시 토큰을 갱신합니다.");
+
+        String refreshToken = null;
+
+        if (refreshHeader != null && refreshHeader.startsWith("Bearer ")) {
+            refreshToken = refreshHeader.substring(7);
+        }
+        else if (refreshCookie != null) {
+            refreshToken = refreshCookie;
+        }
+
+        if (refreshToken == null) {
+            logger.error("SignController : refreshToken() - 리프레시 토큰이 없습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Refresh token is missing.");
+        }
+
         HttpHeaders headers = new HttpHeaders();
         SignInResultDto signInResultDto = signService.refreshToken(refreshToken, response);
 
@@ -63,6 +85,7 @@ public class SignController {
         } else {
             logger.error("SignController : refreshToken() - 리프레시 토큰 갱신 실패.");
         }
+
         return ResponseEntity.ok().headers(headers).body(signInResultDto);
     }
 }
