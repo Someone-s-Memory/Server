@@ -11,11 +11,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -110,10 +114,11 @@ public class DiaryController {
     }
 
     @GetMapping("/month")
-    public ResponseEntity<?> getDiaryByMonth(@RequestParam String month, @AuthenticationPrincipal UserDetails auth) {
+    public ResponseEntity<?> getDiaryByMonth(@RequestParam @DateTimeFormat(pattern = "yyyy-MM") YearMonth month, @AuthenticationPrincipal UserDetails auth) {
         logger.info("DiaryController : getDiaryByMonth() - 월별 일기 조회 요청이 들어왔습니다.");
         try {
-            DiaryMonth diaryMonth = diaryService.getDiaryMonth(month, auth);
+            String formattedMonth = month.toString();
+            DiaryMonth diaryMonth = diaryService.getDiaryMonth(formattedMonth, auth);
             logger.info("DiaryController : getDiaryByMonth() - 월별 일기 조회가 완료되었습니다.");
             return ResponseEntity.ok(diaryMonth);
         } catch (Exception e) {
@@ -122,3 +127,4 @@ public class DiaryController {
         }
     }
 }
+

@@ -131,8 +131,8 @@ public class DiaryServiceImpl implements DiaryService {
     public DiaryMonth getDiaryMonth(String date, UserDetails auth){
         logger.info("DiaryServiceImpl : getDiaryMonth() - 월별 일기 통계를 조회를 시작합니다.");
         User user = methodService.getUserById(auth.getID());
-        String toMonth = LocalDate.now().getYear() + "-" + date;
-        List<Diary> diarys = diaryRepository.findByUserAndDateContaining(user, toMonth);
+
+        List<Diary> diarys = diaryRepository.findByUserAndDateContaining(user, date);
         if (diarys.isEmpty()) {
             logger.warn("DiaryServiceImpl : getDiaryMonth() - 해당 월의 일기가 존재하지 않습니다.");
             throw new IllegalArgumentException("해당 월의 일기가 존재하지 않습니다.");
@@ -146,7 +146,7 @@ public class DiaryServiceImpl implements DiaryService {
 
         for (Diary diary : diarys) {
             feelings.put(diary.getFeelings(), (short) (feelings.getOrDefault(diary.getFeelings(), (short) 0) + 1));
-            toDate = Short.parseShort(diary.getDate().replace(toMonth + "-", ""));
+            toDate = Short.parseShort(diary.getDate().replace(date + "-", ""));
             uniqueDates.add(toDate);
         }
 
