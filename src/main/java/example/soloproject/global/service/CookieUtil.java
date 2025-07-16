@@ -18,6 +18,7 @@ public class CookieUtil {
         access.setHttpOnly(true);
         access.setSecure(true);
         access.setMaxAge(24 * 60 * 60);
+        
         response.addCookie(access);
         logger.info("CookieUtil : addJwtCookie() 실행 - accessToken: {}", accessToken);
 
