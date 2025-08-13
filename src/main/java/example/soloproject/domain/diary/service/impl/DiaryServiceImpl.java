@@ -137,6 +137,8 @@ public class DiaryServiceImpl implements DiaryService {
             throw new IllegalArgumentException("해당 월의 일기가 존재하지 않습니다.");
         }
 
+        diarys.sort(Comparator.comparing(Diary::getDate));
+
         Map<String, Short> feelings = new HashMap<>();
         short maxCount = 0;
         short count = 0;
