@@ -1,5 +1,6 @@
 package example.soloproject.global.service.impl;
 
+import example.soloproject.global.entity.Calendar;
 import example.soloproject.global.entity.User;
 import example.soloproject.global.presentation.dto.SignInCauseDto;
 import example.soloproject.global.presentation.dto.SignInResultDto;
@@ -7,6 +8,7 @@ import example.soloproject.global.presentation.dto.SignUpCauseDto;
 import example.soloproject.global.presentation.dto.SignUpResultDto;
 import example.soloproject.global.jwt.CommonResponse;
 import example.soloproject.global.jwt.JwtTokenProvider;
+import example.soloproject.global.repository.CalendarRepository;
 import example.soloproject.global.repository.UserRepository;
 import example.soloproject.global.service.CookieUtil;
 import example.soloproject.global.service.SignService;
@@ -17,7 +19,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +32,7 @@ public class SignServiceImpl implements SignService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CalendarRepository calendarRepository;
     private final PasswordEncoder passwordEncoder;
     private final CookieUtil cookieUtil;
 
@@ -63,6 +70,19 @@ public class SignServiceImpl implements SignService {
         logger.info("SignServiceImpl : signIn() 실행 - 패스워드 일치");
 
         logger.info("SignServiceImpl : signIn() 실행 - SignInResultDto 객체 생성");
+
+        Calendar calendar = calendarRepository.findByUser(user).orElse(
+                Calendar.builder()
+                        .user(user)
+                        .dates(new HashSet<>())
+                        .build()
+        );
+
+        Set<LocalDate> date = calendar.getDates();
+        date.add(LocalDate.now());
+        calendar.setDates(date);
+        calendarRepository.save(calendar);
+
         SignInResultDto signInResultDto = SignInResultDto.builder()
                 .token(jwtTokenProvider.createAccess(String.valueOf(user.getUId())
                         ,user.getRoles()))
