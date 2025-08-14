@@ -18,11 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +56,7 @@ public class SignServiceImpl implements SignService {
         return signUpResultDto;
     }
 
+    @Transactional
     public SignInResultDto signIn(SignInCauseDto request, HttpServletResponse response) throws RuntimeException {
         logger.info("SignServiceImpl : signIn() 실행 - 로그인 정보 전달");
         User user = userRepository.findByUId(request.getUserId());
@@ -66,20 +66,45 @@ public class SignServiceImpl implements SignService {
             logger.info("SignServiceImpl : signIn() 실행 - 패스워드 불일치");
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
+
         logger.info("SignServiceImpl : signIn() 실행 - 패스워드 일치");
 
         logger.info("SignServiceImpl : signIn() 실행 - SignInResultDto 객체 생성");
 
-        Calendar calendar = calendarRepository.findByUser(user).orElse(
-                Calendar.builder()
-                        .user(user)
-                        .dates(new HashSet<>())
-                        .build()
-        );
+        Optional<Calendar> ifCalendar = calendarRepository.findByUser(user);
+        Calendar calendar;
+        if (ifCalendar.isEmpty()) {
+            logger.info("SignServiceImpl : signIn() 실행 - Calendar가 존재하지 않음, 새로 생성");
+            calendar = Calendar.builder()
+                    .user(user)
+                    .dates(new HashSet<>())
+                    .build();
+            Set<LocalDate> date = calendar.getDates();
+            date.add(LocalDate.now());
+            calendar.setDates(date);
+        } else {
+            logger.info("SignServiceImpl : signIn() 실행 - Calendar가 존재함");
+            calendar = ifCalendar.get();
+            LocalDate maxDate = Collections.max(calendar.getDates());
 
-        Set<LocalDate> date = calendar.getDates();
-        date.add(LocalDate.now());
-        calendar.setDates(date);
+            if (maxDate.equals(LocalDate.now().minusDays(1))) {
+                logger.info("SignServiceImpl : signIn() 실행 - 어제 날짜와 오늘 날짜가 연속됨, 오늘 날짜 추가");
+                Set<LocalDate> dates = calendar.getDates();
+                dates.add(LocalDate.now());
+                calendar.setDates(dates);
+                calendarRepository.save(calendar);
+            } else {
+                logger.info("SignServiceImpl : signIn() 실행 - 어제 날짜와 오늘 날짜가 연속되지 않음, 이제까지 날짜 모두 삭제");
+                calendarRepository.deleteByUser(user);
+
+                calendar = Calendar.builder()
+                        .user(user)
+                        .dates(new HashSet<>(List.of(LocalDate.now())))
+                        .build();
+                calendarRepository.save(calendar);
+            }
+        }
+
         calendarRepository.save(calendar);
 
         SignInResultDto signInResultDto = SignInResultDto.builder()

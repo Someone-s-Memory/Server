@@ -137,8 +137,6 @@ public class DiaryServiceImpl implements DiaryService {
             throw new IllegalArgumentException("해당 월의 일기가 존재하지 않습니다.");
         }
 
-        diarys.sort(Comparator.comparing(Diary::getDate));
-
         Map<String, Short> feelings = new HashMap<>();
         short maxCount = 0;
         short count = 0;
@@ -171,7 +169,6 @@ public class DiaryServiceImpl implements DiaryService {
                 .every((short) diarys.size())
                 .build();
 
-
         logger.info("DiaryServiceImpl : getDiaryMonth() - 월별 일기 통계 조회가 완료되었습니다.");
         return diaryMonth;
     }
@@ -191,4 +188,5 @@ public class DiaryServiceImpl implements DiaryService {
             diarySelecteds.add(diarySelected);
         }
     }
+
 }
