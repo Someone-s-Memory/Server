@@ -6,7 +6,6 @@ import example.soloproject.global.presentation.dto.SignUpCauseDto;
 import example.soloproject.global.presentation.dto.SignUpResultDto;
 import example.soloproject.global.service.SignService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

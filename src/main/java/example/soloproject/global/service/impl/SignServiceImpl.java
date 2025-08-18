@@ -82,6 +82,7 @@ public class SignServiceImpl implements SignService {
             Set<LocalDate> date = calendar.getDates();
             date.add(LocalDate.now());
             calendar.setDates(date);
+            calendarRepository.save(calendar);
         } else {
             logger.info("SignServiceImpl : signIn() 실행 - Calendar가 존재함");
             calendar = ifCalendar.get();
@@ -105,13 +106,12 @@ public class SignServiceImpl implements SignService {
             }
         }
 
-        calendarRepository.save(calendar);
-
         SignInResultDto signInResultDto = SignInResultDto.builder()
                 .token(jwtTokenProvider.createAccess(String.valueOf(user.getUId())
                         ,user.getRoles()))
                 .refresh(jwtTokenProvider.createRefresh(String.valueOf(user.getUId())
                         ,user.getRoles()))
+                .attendance(calendarRepository.countDatesByCalendarId(calendar.getId()))
                 .build();
 
         logger.info("SignServiceImpl : signIn() 실행 - Cookie에 token값 주입");
