@@ -1,6 +1,7 @@
 package example.soloproject.global.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import example.soloproject.domain.item.enitty.Item;
 import example.soloproject.domain.diary.entity.Diary;
 import example.soloproject.domain.pet.entity.Pet;
 import jakarta.persistence.*;
@@ -41,6 +42,12 @@ public class User implements UserDetails {
 
     @Column(unique = true)
     private String email;
+
+    @Column(nullable = false)
+    private int coin;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Item> items = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pet> pets = new ArrayList<>();
