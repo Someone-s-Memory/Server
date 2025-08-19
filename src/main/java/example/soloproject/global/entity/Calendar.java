@@ -24,4 +24,7 @@ public class Calendar {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ElementCollection
+    private Set<String> emojis;
 }
