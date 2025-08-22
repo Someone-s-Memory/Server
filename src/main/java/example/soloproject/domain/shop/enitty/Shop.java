@@ -18,7 +18,7 @@ public class Shop {
     private Long id;
 
     private String name;
-    private Long value;
+    private Long price;
     private String description;
     private String category;
 }
