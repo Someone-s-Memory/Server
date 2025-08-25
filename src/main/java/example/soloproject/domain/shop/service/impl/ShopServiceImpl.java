@@ -1,6 +1,7 @@
 package example.soloproject.domain.shop.service.impl;
 
 import example.soloproject.domain.shop.enitty.Shop;
+import example.soloproject.domain.shop.presentation.dto.ExhibitionDto;
 import example.soloproject.domain.shop.presentation.dto.ShopDto;
 import example.soloproject.domain.shop.repository.ShopRepository;
 import example.soloproject.domain.shop.service.ShopService;
@@ -36,5 +37,19 @@ public class ShopServiceImpl implements ShopService {
         }
         logger.info("ShopServiceImpl : getShop() - 상점 정보 조회가 완료되었습니다.");
         return response;
+    }
+
+    public void exhibition(UserDetails auth, List<ExhibitionDto> requests) {
+        logger.info("ShopServiceImpl : exhibition() - 상점 진열 요청이 들어왔습니다.");
+        for (ExhibitionDto request : requests) {
+            Shop shop = Shop.builder()
+                    .price(request.getPrice())
+                    .name(request.getName())
+                    .description(request.getDescription())
+                    .category(request.getCategory())
+                    .build();
+            shopRepository.save(shop);
+        }
+        logger.info("ShopServiceImpl : exhibition() - 상점 진열이 완료되었습니다.");
     }
 }
