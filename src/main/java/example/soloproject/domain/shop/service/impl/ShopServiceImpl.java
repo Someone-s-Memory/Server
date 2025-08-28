@@ -1,11 +1,16 @@
 package example.soloproject.domain.shop.service.impl;
 
+import example.soloproject.domain.item.enitty.Item;
+import example.soloproject.domain.item.repository.ItemRepository;
 import example.soloproject.domain.shop.enitty.Shop;
+import example.soloproject.domain.shop.presentation.dto.BuyDto;
 import example.soloproject.domain.shop.presentation.dto.ExhibitionDto;
 import example.soloproject.domain.shop.presentation.dto.ShopDto;
 import example.soloproject.domain.shop.repository.ShopRepository;
 import example.soloproject.domain.shop.service.ShopService;
+import example.soloproject.global.entity.User;
 import example.soloproject.global.entity.UserDetails;
+import example.soloproject.global.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +25,8 @@ import java.util.List;
 public class ShopServiceImpl implements ShopService {
     private final Logger logger = LoggerFactory.getLogger(ShopServiceImpl.class);
     private final ShopRepository shopRepository;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
 
     public List<ShopDto> getShop() {
         logger.info("ShopServiceImpl : getShop() - 상점 정보 조회 요청이 들어왔습니다.");
@@ -51,5 +58,24 @@ public class ShopServiceImpl implements ShopService {
             shopRepository.save(shop);
         }
         logger.info("ShopServiceImpl : exhibition() - 상점 진열이 완료되었습니다.");
+    }
+
+    public void buyItem(BuyDto request, UserDetails auth) {
+        logger.info("ShopServiceImpl : buyItem() - 아이템 구매 요청이 들어왔습니다.");
+        Shop shop = shopRepository.findById(request.getShopId()).orElseThrow(() -> new IllegalArgumentException("아이템이 존재하지 않습니다."));
+        User user = userRepository.findByUId(auth.getUId());
+        long price = shop.getPrice() * request.getQuantity();
+        if (user.getCoin() < price) {
+            throw new IllegalArgumentException("코인이 부족합니다.");
+        }
+        user.setCoin((int) (user.getCoin() - price));
+        userRepository.save(user);
+        Item item = Item.builder()
+                .quantity(request.getQuantity())
+                .shop(shop)
+                .user(user)
+                .build();
+        itemRepository.save(item);
+        logger.info("ShopServiceImpl : buyItem() - 아이템 구매가 완료되었습니다.");
     }
 }

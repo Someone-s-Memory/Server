@@ -1,5 +1,6 @@
 package example.soloproject.domain.shop.presentation;
 
+import example.soloproject.domain.shop.presentation.dto.BuyDto;
 import example.soloproject.domain.shop.presentation.dto.ExhibitionDto;
 import example.soloproject.domain.shop.service.ShopService;
 import example.soloproject.global.entity.UserDetails;
@@ -42,6 +43,19 @@ public class ShopController {
         catch (Exception e) {
             logger.error("ShopController : exhibition() - 상점 진열 중 오류 발생: {}", e.getMessage());
             return ResponseEntity.badRequest().body("상점 진열 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/buy")
+    public ResponseEntity<?> buyItem(@AuthenticationPrincipal UserDetails auth, @RequestBody BuyDto request) {
+        logger.info("ShopController : buyItem() - 아이템 구매 요청이 들어왔습니다.");
+        try {
+            logger.info("ShopController : buyItem() - 아이템 ID: {}", request);
+            shopService.buyItem(request, auth);
+            return ResponseEntity.ok("아이템 구매가 완료되었습니다.");
+        } catch (Exception e) {
+            logger.error("ShopController : buyItem() - 아이템 구매 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().body("아이템 구매 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 }
