@@ -49,6 +49,9 @@ public class ShopServiceImpl implements ShopService {
     public void exhibition(UserDetails auth, List<ExhibitionDto> requests) {
         logger.info("ShopServiceImpl : exhibition() - 상점 진열 요청이 들어왔습니다.");
         for (ExhibitionDto request : requests) {
+            shopRepository.findByName(request.getName()).ifPresent(shop -> {
+                throw new IllegalArgumentException("이미 존재하는 아이템입니다: " + shop.getName());
+            });
             Shop shop = Shop.builder()
                     .price(request.getPrice())
                     .name(request.getName())

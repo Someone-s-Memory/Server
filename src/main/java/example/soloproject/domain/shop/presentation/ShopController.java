@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("shop")
+@RequestMapping("/shop")
 public class ShopController {
     private final Logger logger = LoggerFactory.getLogger(ShopController.class);
     private final ShopService shopService;
@@ -33,7 +33,7 @@ public class ShopController {
 
     }
 
-    @PostMapping("exhibit")
+    @PostMapping("/exhibit")
     public ResponseEntity<?> exhibition(@AuthenticationPrincipal UserDetails auth, @RequestBody List<ExhibitionDto> request) {
         logger.info("ShopController : exhibition() - 상점 진열 요청이 들어왔습니다.");
         try {
