@@ -26,7 +26,6 @@ public class DiaryController {
     private final Logger logger = LoggerFactory.getLogger(DiaryController.class);
     private final DiaryService diaryService;
 
-    // update도 추가 예정 -> 새로운 API로 생성
     @PostMapping("/write")
     public ResponseEntity<?> writeDiary(@Valid @RequestBody DiaryInsert diaryInsert, @AuthenticationPrincipal UserDetails auth) {
         logger.info(("DiaryController : writeDiary() - 일기 작성 요청이 들어왔습니다."));

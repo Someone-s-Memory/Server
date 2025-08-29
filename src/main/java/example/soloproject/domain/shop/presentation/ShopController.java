@@ -1,5 +1,6 @@
 package example.soloproject.domain.shop.presentation;
 
+import example.soloproject.domain.diary.presentation.dto.response.Message;
 import example.soloproject.domain.shop.presentation.dto.BuyDto;
 import example.soloproject.domain.shop.presentation.dto.ExhibitionDto;
 import example.soloproject.domain.shop.service.ShopService;
@@ -28,7 +29,7 @@ public class ShopController {
         }
         catch (Exception e) {
             logger.error("ShopController : getShop() - 상점 정보 조회 중 오류 발생: {}", e.getMessage());
-            return ResponseEntity.badRequest().body("상점 정보 조회 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.badRequest().body(m("상점 정보 조회 중 오류가 발생했습니다: " + e.getMessage()));
         }
 
     }
@@ -42,7 +43,7 @@ public class ShopController {
         }
         catch (Exception e) {
             logger.error("ShopController : exhibition() - 상점 진열 중 오류 발생: {}", e.getMessage());
-            return ResponseEntity.badRequest().body("상점 진열 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.badRequest().body(m("상점 진열 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
 
@@ -55,7 +56,12 @@ public class ShopController {
             return ResponseEntity.ok("아이템 구매가 완료되었습니다.");
         } catch (Exception e) {
             logger.error("ShopController : buyItem() - 아이템 구매 중 오류 발생: {}", e.getMessage());
-            return ResponseEntity.badRequest().body("아이템 구매 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.badRequest().body(m("아이템 구매 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
+
+    public Message m (String message) {
+        return Message.of(message);
+    }
+
 }

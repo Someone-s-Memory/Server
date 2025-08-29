@@ -2,18 +2,18 @@ package example.soloproject.domain.pet.entity;
 
 import example.soloproject.global.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-@Builder(toBuilder = true)
+@AllArgsConstructor
+@Getter
+@Table
+@Entity
+@Setter
 public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
