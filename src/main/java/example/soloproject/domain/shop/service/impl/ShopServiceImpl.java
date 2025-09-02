@@ -81,4 +81,26 @@ public class ShopServiceImpl implements ShopService {
         itemRepository.save(item);
         logger.info("ShopServiceImpl : buyItem() - 아이템 구매가 완료되었습니다.");
     }
+
+    public void sold(UserDetails auth, BuyDto request){
+        logger.info("ShopServiceImpl : sold() - 상점 판매 완료 요청이 들어왔습니다.");
+        User user = userRepository.findByUId(auth.getUId());
+        Item item = itemRepository.findById(request.getShopId()).orElseThrow(() -> new IllegalArgumentException("아이템이 존재하지 않습니다."));
+        if (!item.getUser().getUId().equals(user.getUId())) {
+            throw new IllegalArgumentException("해당 아이템을 소유하고 있지 않습니다.");
+        }
+        if (item.getQuantity() < request.getQuantity()) {
+            throw new IllegalArgumentException("판매하려는 아이템의 수량이 보유한 수량보다 많습니다.");
+        }
+        long price = Math.round(item.getShop().getPrice() * request.getQuantity() * 0.8);
+        user.setCoin((int) (user.getCoin() + price));
+        userRepository.save(user);
+        item.setQuantity(item.getQuantity() - request.getQuantity());
+        if (item.getQuantity() == 0) {
+            itemRepository.delete(item);
+        } else {
+            itemRepository.save(item);
+        }
+        logger.info("ShopServiceImpl : sold() - 상점 판매가 완료되었습니다.");
+    }
 }

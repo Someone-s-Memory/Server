@@ -11,4 +11,5 @@ public interface ShopService {
     List<ShopDto> getShop();
     void exhibition(UserDetails auth, List<ExhibitionDto> request);
     void buyItem(BuyDto request, UserDetails auth);
+    void sold(UserDetails auth, BuyDto request);
 }

@@ -60,6 +60,18 @@ public class ShopController {
         }
     }
 
+    @PutMapping("/sold")
+    public ResponseEntity<?> sold(@AuthenticationPrincipal UserDetails auth, @RequestBody BuyDto request) {
+        logger.info("ShopController : sold() - 상점 판매 완료 요청이 들어왔습니다.");
+        try {
+            shopService.sold(auth, request);
+            return ResponseEntity.ok("상점 판매가 완료되었습니다.");
+        } catch (Exception e) {
+            logger.error("ShopController : sold() - 상점 판매 완료 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(m("상점 판매 완료 중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
+
     public Message m (String message) {
         return Message.of(message);
     }
